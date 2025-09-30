@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OrtuConnect - Orang Tua</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f9fafb;
+            --dark: #1f2937;
+            --gray: #6b7280;
+            --light-gray: #f3f4f6;
+            --border: #e5e7eb;
+            --white: #ffffff;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .app-container {
+            max-width: 500px;
+            height: 100vh;
+            margin: 0 auto;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            color: var(--dark);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .login-logo i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .login-logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .login-form .form-group {
+            margin-bottom: 16px;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--dark);
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .login-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .login-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* App Screens */
+        .app-screen {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .app-screen.active {
+            display: flex;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .app-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Dashboard Cards */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        .attendance-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .attendance-item {
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            background: var(--light-gray);
+        }
+
+        .attendance-item.hadir {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        .attendance-item.izin {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        .attendance-item.alpa {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .attendance-count {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .attendance-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .list-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .list-subtitle {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .list-status {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-top: 4px;
+            display: inline-block;
+        }
+
+        .status-approved {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        /* Form Styles */
+        .form-section {
+            margin-bottom: 16px;
+        }
+
+        .form-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-section input,
+        .form-section select,
+        .form-section textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        .form-section textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 12px 0;
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--gray);
+            font-size: 12px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        /* Calendar */
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray);
+            padding: 8px 0;
+        }
+
+        .calendar-day {
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .calendar-day.today {
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+        }
+
+        .calendar-day.event {
+            position: relative;
+        }
+
+        .calendar-day.event::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 4px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* Hide scrollbar */
+        .app-screen {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .app-screen::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="login-screen">
+            <div class="login-container">
+                <div class="login-logo">
+                    <i class="fas fa-users"></i>
+                    <h1>OrtuConnect</h1>
+                    <p style="color: var(--gray); font-size: 14px;">Aplikasi Orang Tua</p>
+                </div>
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" placeholder="Masukkan username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Masukkan password" required>
+                    </div>
+                    <button type="submit" class="login-btn">Masuk</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- App Screens -->
+        <!-- Dashboard -->
+        <div id="dashboard" class="app-screen">
+            <div class="app-header">
+                <div class="app-title">Dashboard</div>
+                <div class="user-info">
+                    <div class="user-avatar">AS</div>
+                    <span>Anita Sari</span>
+                </div>
+            </div>
+
+            <!-- Absensi Summary -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-calendar-check"></i>
+                    Absensi Minggu Ini
+                </div>
+                <div class="attendance-summary">
+                    <div class="attendance-item hadir">
+                        <div class="attendance-count">5</div>
+                        <div class="attendance-label">Hadir</div>
+                    </div>
+                    <div class="attendance-item izin">
+                        <div class="attendance-count">1</div>
+                        <div class="attendance-label">Izin</div>
+                    </div>
+                    <div class="attendance-item">
+                        <div class="attendance-count">1</div>
+                        <div class="attendance-label">Sakit</div>
+                    </div>
+                    <div class="attendance-item alpa">
+                        <div class="attendance-count">0</div>
+                        <div class="attendance-label">Alpa</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Izin Terbaru -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-file-medical"></i>
+                    Izin Terbaru
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Izin Sakit</div>
+                    <div class="list-subtitle">25 Maret 2025</div>
+                    <div class="list-status status-approved">Disetujui</div>
+                </div>
+            </div>
+
+            <!-- Pengumuman Terbaru -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-bullhorn"></i>
+                    Pengumuman Terbaru
+                </div>
+                <div class="list-item">
+                    <div class="list-title">[PENTING] Pembagian Rapor</div>
+                    <div class="list-subtitle">5 April 2025</div>
+                </div>
+            </div>
+
+            <!-- Agenda Terdekat -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-calendar-day"></i>
+                    Agenda Terdekat
+                </div>
+                <div class="list-item">
+                    <div class="list-title">UTS Semester Genap</div>
+                    <div class="list-subtitle">10–14 April 2025</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Upacara Hari Kartini</div>
+                    <div class="list-subtitle">21 April 2025</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profil Anak -->
+        <div id="profile" class="app-screen">
+            <div class="app-header">
+                <div class="app-title">Profil Anak</div>
+                <div class="user-info">
+                    <div class="user-avatar">AS</div>
+                    <span>Anita Sari</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="list-item">
+                    <div class="list-title">Nama Lengkap</div>
+                    <div class="list-subtitle">Andi Pratama</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Kelas</div>
+                    <div class="list-subtitle">X-A</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Wali Kelas</div>
+                    <div class="list-subtitle">Budi Santoso, S.Pd</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Tanggal Lahir</div>
+                    <div class="list-subtitle">15 Januari 2008</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-phone"></i>
+                    Kontak Sekolah
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Nomor Telepon</div>
+                    <div class="list-subtitle">(021) 1234-5678</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Email Wali Kelas</div>
+                    <div class="list-subtitle">budi.santoso@sekolah.com</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Absensi & Perizinan -->
+        <div id="attendance-permission" class="app-screen">
+            <div class="app-header">
+                <div class="app-title">Absensi & Perizinan</div>
+                <div class="user-info">
+                    <div class="user-avatar">AS</div>
+                    <span>Anita Sari</span>
+                </div>
+            </div>
+
+            <!-- Riwayat Absensi -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-history"></i>
+                    Riwayat Absensi (Maret 2025)
+                </div>
+                <div class="list-item">
+                    <div class="list-title">25 Maret 2025</div>
+                    <div class="list-subtitle">Sakit</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">24 Maret 2025</div>
+                    <div class="list-subtitle">Hadir</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">23 Maret 2025</div>
+                    <div class="list-subtitle">Hadir</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">22 Maret 2025</div>
+                    <div class="list-subtitle">Izin</div>
+                </div>
+            </div>
+
+            <!-- Ajukan Izin -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-plus-circle"></i>
+                    Ajukan Izin
+                </div>
+                <div class="form-section">
+                    <label for="permissionDate">Tanggal</label>
+                    <input type="date" id="permissionDate">
+                </div>
+                <div class="form-section">
+                    <label for="permissionReason">Alasan</label>
+                    <select id="permissionReason">
+                        <option value="sakit">Sakit</option>
+                        <option value="izin">Izin Keluarga</option>
+                        <option value="lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-section">
+                    <label for="permissionNote">Keterangan</label>
+                    <textarea id="permissionNote" placeholder="Jelaskan alasan izin..."></textarea>
+                </div>
+                <button class="btn btn-primary">Ajukan Izin</button>
+            </div>
+
+            <!-- Status Izin -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-file-alt"></i>
+                    Status Izin
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Izin Sakit - 25 Maret</div>
+                    <div class="list-subtitle">Diajukan: 24 Maret 2025</div>
+                    <div class="list-status status-approved">Disetujui</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Izin Keluarga - 22 Maret</div>
+                    <div class="list-subtitle">Diajukan: 21 Maret 2025</div>
+                    <div class="list-status status-approved">Disetujui</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kalender Akademik -->
+        <div id="calendar" class="app-screen">
+            <div class="app-header">
+                <div class="app-title">Kalender Akademik</div>
+                <div class="user-info">
+                    <div class="user-avatar">AS</div>
+                    <span>Anita Sari</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="calendar">
+                    <!-- Day Headers -->
+                    <div class="calendar-day-header">Min</div>
+                    <div class="calendar-day-header">Sen</div>
+                    <div class="calendar-day-header">Sel</div>
+                    <div class="calendar-day-header">Rab</div>
+                    <div class="calendar-day-header">Kam</div>
+                    <div class="calendar-day-header">Jum</div>
+                    <div class="calendar-day-header">Sab</div>
+                    <!-- Days -->
+                    <div class="calendar-day">23</div>
+                    <div class="calendar-day">24</div>
+                    <div class="calendar-day">25</div>
+                    <div class="calendar-day">26</div>
+                    <div class="calendar-day">27</div>
+                    <div class="calendar-day">28</div>
+                    <div class="calendar-day">29</div>
+                    <div class="calendar-day">30</div>
+                    <div class="calendar-day">31</div>
+                    <div class="calendar-day today">1</div>
+                    <div class="calendar-day">2</div>
+                    <div class="calendar-day">3</div>
+                    <div class="calendar-day">4</div>
+                    <div class="calendar-day event">5</div>
+                    <div class="calendar-day">6</div>
+                    <div class="calendar-day">7</div>
+                    <div class="calendar-day">8</div>
+                    <div class="calendar-day">9</div>
+                    <div class="calendar-day">10</div>
+                    <div class="calendar-day event">11</div>
+                    <div class="calendar-day">12</div>
+                    <div class="calendar-day">13</div>
+                    <div class="calendar-day">14</div>
+                    <div class="calendar-day">15</div>
+                    <div class="calendar-day">16</div>
+                    <div class="calendar-day">17</div>
+                    <div class="calendar-day">18</div>
+                    <div class="calendar-day">19</div>
+                    <div class="calendar-day">20</div>
+                    <div class="calendar-day">21</div>
+                    <div class="calendar-day">22</div>
+                    <div class="calendar-day">23</div>
+                    <div class="calendar-day">24</div>
+                    <div class="calendar-day">25</div>
+                    <div class="calendar-day">26</div>
+                    <div class="calendar-day">27</div>
+                    <div class="calendar-day">28</div>
+                    <div class="calendar-day">29</div>
+                    <div class="calendar-day">30</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-list"></i>
+                    Daftar Kegiatan
+                </div>
+                <div class="list-item">
+                    <div class="list-title">UTS Semester Genap</div>
+                    <div class="list-subtitle">10–14 April 2025</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Upacara Hari Kartini</div>
+                    <div class="list-subtitle">21 April 2025</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Libur Lebaran</div>
+                    <div class="list-subtitle">28 Maret – 7 April 2025</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Pertemuan Orang Tua</div>
+                    <div class="list-subtitle">15 April 2025</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pengumuman -->
+        <div id="announcements" class="app-screen">
+            <div class="app-header">
+                <div class="app-title">Pengumuman</div>
+                <div class="user-info">
+                    <div class="user-avatar">AS</div>
+                    <span>Anita Sari</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="list-item">
+                    <div class="list-title">[PENTING] Pembagian Rapor</div>
+                    <div class="list-subtitle">Diposting: 25 Maret 2025</div>
+                    <div class="list-subtitle" style="margin-top: 8px; color: var(--dark);">
+                        Pembagian rapor semester genap akan dilaksanakan pada tanggal 5 April 2025 pukul 08.00 WIB di aula sekolah.
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Jadwal Les Tambahan</div>
+                    <div class="list-subtitle">Diposting: 24 Maret 2025</div>
+                    <div class="list-subtitle" style="margin-top: 8px; color: var(--dark);">
+                        Les tambahan akan dimulai minggu depan setiap hari Senin dan Rabu pukul 15.00-17.00 WIB.
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="list-title">Pengumpulan Dana Kelas</div>
+                    <div class="list-subtitle">Diposting: 23 Maret 2025</div>
+                    <div class="list-subtitle" style="margin-top: 8px; color: var(--dark);">
+                        Pengumpulan dana kelas untuk kegiatan study tour, batas pembayaran 30 Maret 2025.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" data-screen="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" data-screen="profile">
+                <i class="fas fa-user"></i>
+                <span>Profil</span>
+            </div>
+            <div class="nav-item" data-screen="attendance-permission">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Absensi</span>
+            </div>
+            <div class="nav-item" data-screen="calendar">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Kalender</span>
+            </div>
+            <div class="nav-item" data-screen="announcements">
+                <i class="fas fa-bullhorn"></i>
+                <span>Pengumuman</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation (in real app, this would be API call)
+            if (username && password) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').classList.add('active');
+            } else {
+                alert('Silakan masukkan username dan password');
+            }
+        });
+
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active class from all nav items
+                document.querySelectorAll('.nav-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                
+                // Add active class to clicked item
+                this.classList.add('active');
+                
+                // Hide all screens
+                document.querySelectorAll('.app-screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+                
+                // Show the corresponding screen
+                const screenId = this.getAttribute('data-screen');
+                document.getElementById(screenId).classList.add('active');
+            });
+        });
+
+        // Permission form submission
+        document.querySelector('.btn-primary').addEventListener('click', function() {
+            const date = document.getElementById('permissionDate').value;
+            const reason = document.getElementById('permissionReason').value;
+            const note = document.getElementById('permissionNote').value;
+            
+            if (date) {
+                alert('Izin berhasil diajukan! Menunggu persetujuan guru.');
+                document.getElementById('permissionDate').value = '';
+                document.getElementById('permissionNote').value = '';
+            } else {
+                alert('Silakan pilih tanggal izin');
+            }
+        });
+    </script>
+</body>
+</html>
